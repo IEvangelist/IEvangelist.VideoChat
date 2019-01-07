@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { NamedRoom, VideoChatService } from '../services/videochat.service';
 
 
@@ -24,7 +25,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
         this.subscription =
             this.videoChatService
                 .$roomsUpdated
-                .do(async _ => await this.updateRooms())
+                .pipe(tap(_ => this.updateRooms()))
                 .subscribe();
     }
 

@@ -41,8 +41,7 @@ namespace IEvangelist.VideoChat
             }
             else
             {
-                app.UseExceptionHandler("/Error")
-                   .UseHsts();
+                app.UseHsts();
             }
 
             app.UseSwagger()

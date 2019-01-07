@@ -1,8 +1,7 @@
 import { connect, ConnectOptions, LocalTrack, Room } from 'twilio-video';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ReplaySubject } from 'rxjs/Rx';
-import { Observable } from 'rxjs/Observable';
+import { ReplaySubject , Observable } from 'rxjs';
 
 interface AuthToken {
     token: string;

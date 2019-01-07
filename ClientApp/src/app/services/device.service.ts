@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs/Rx';
-import { Observable } from 'rxjs/Observable';
+import { ReplaySubject , Observable } from 'rxjs';
 
 export type Devices = MediaDeviceInfo[];
 
