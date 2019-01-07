@@ -1,0 +1,20 @@
+<div class="jumbotron">
+    <h4 class="display-4"><i class="fas fa-cogs"></i> Settings</h4>
+    <form class="form">
+        <div class="form-group" *ngIf="hasAudioInputOptions">
+            <app-device-select [key]="'audioInputId'" [kind]="'audioinput'"
+                               [label]="'Audio Input Source'" [devices]="devices"
+                               (settingsChanged)="onSettingsChanged($event)"></app-device-select>
+        </div>
+        <div class="form-group" *ngIf="hasAudioOutputOptions">
+            <app-device-select [key]="'audioOutputId'" [kind]="'audiooutput'"
+                               [label]="'Audio Output Source'" [devices]="devices"
+                               (settingsChanged)="onSettingsChanged($event)"></app-device-select>
+        </div>
+        <div class="form-group" *ngIf="hasVideoInputOptions">
+            <app-device-select [key]="'videoInputId'" [kind]="'videoinput'"
+                               [label]="'Video Input Source'" [devices]="devices"
+                               (settingsChanged)="onSettingsChanged($event)"></app-device-select>
+        </div>
+    </form>
+</div>

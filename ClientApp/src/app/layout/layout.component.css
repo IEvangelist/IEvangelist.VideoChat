@@ -1,0 +1,71 @@
+.grid-container {
+    display: grid;
+    height: 100vh;
+    grid-template-columns: 2fr 4fr 2fr;
+    grid-template-rows: 1fr 7fr 1fr;
+    grid-template-areas: "top-left . top-right" "left content right" "bottom-left . bottom-right";
+}
+
+.grid-content {
+    grid-area: content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(56, 56, 56);
+    border-top: solid 6px #F22F46;
+    border-bottom: solid 6px #F22F46;
+}
+
+.grid-left {
+    grid-area: left;
+    background: linear-gradient(to left, rgb(56, 56, 56) 0, transparent 100%);
+    border-top: solid 6px #F22F46;
+    border-bottom: solid 6px #F22F46;
+}
+
+.grid-right {
+    grid-area: right;
+    background: linear-gradient(to right, rgb(56, 56, 56) 0, transparent 100%);
+    border-top: solid 6px #F22F46;
+    border-bottom: solid 6px #F22F46;
+}
+
+.grid-top-left,
+.grid-top-right,
+.grid-bottom-left,
+.grid-bottom-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-top-left {
+    grid-area: top-left;
+}
+.grid-top-right {
+    grid-area: top-right;
+}
+.grid-bottom-left {
+    grid-area: bottom-left;
+}
+.grid-bottom-right {
+    grid-area: bottom-right;
+}
+
+div.grid-bottom-right > a {
+    color: #1da1f2;
+    font-size: 2rem;
+}
+
+    div.grid-bottom-right > a:hover {
+        color: #96cff2;
+    }
+
+.grid-top-left > img {
+    max-height: 60px;
+    max-width: 225px;
+}
+
+.grid-top-left > a:hover > img {
+    filter: brightness(110%);
+}

@@ -1,0 +1,11 @@
+:host,
+#preview,
+video {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#preview {
+    border: solid 6px rgb(34, 34, 34);
+    background-color: rgb(38, 38, 38);
+}

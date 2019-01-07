@@ -1,0 +1,20 @@
+<div class="grid-container">
+    <div class="grid-bottom-right">
+        <a href="https://twitter.com/davidpine7" target="_blank"><i class="fab fa-twitter"></i> @davidpine7</a>
+    </div>
+    <div class="grid-left">
+        <app-rooms #rooms (roomChanged)="onRoomChanged($event)"></app-rooms>
+    </div>
+    <div class="grid-content">
+        <app-camera #camera></app-camera>
+        <app-participants #participants></app-participants>
+    </div>
+    <div class="grid-right">
+        <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>
+    </div>
+    <div class="grid-top-left">
+        <a href="https://www.twilio.com/video" target="_blank">
+            <img src="assets/twilio-badge-red.png" alt="Powered by Twilio" />
+        </a>
+    </div>
+</div>

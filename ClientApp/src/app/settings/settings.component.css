@@ -1,0 +1,11 @@
+div.jumbotron {
+    background-color: transparent;
+}
+
+button > i {
+    padding-right: 6px;
+}
+
+label {
+    font-size: 1.25rem;
+}
