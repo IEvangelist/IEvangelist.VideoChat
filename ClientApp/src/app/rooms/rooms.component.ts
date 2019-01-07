@@ -20,11 +20,11 @@ export class RoomsComponent implements OnInit, OnDestroy {
         private readonly videoChatService: VideoChatService) { }
 
     async ngOnInit() {
-        await this.getAndAssignRooms();
+        await this.updateRooms();
         this.subscription =
             this.videoChatService
                 .$roomsUpdated
-                .do(async _ => await this.getAndAssignRooms())
+                .do(async _ => await this.updateRooms())
                 .subscribe();
     }
 
@@ -43,7 +43,7 @@ export class RoomsComponent implements OnInit, OnDestroy {
         this.roomChanged.emit(roomName);
     }
 
-    private async getAndAssignRooms() {
+    async updateRooms() {
         this.rooms = (await this.videoChatService.getAllRooms()) as NamedRoom[];
     }
 }

@@ -58,14 +58,14 @@ export class ParticipantsComponent implements AfterViewInit {
     }
 
     private isAttachable(track: RemoteTrack): track is RemoteAudioTrack | RemoteVideoTrack {
-        return !!track
-            && (track as RemoteAudioTrack).attach !== undefined
-            || (track as RemoteVideoTrack).attach !== undefined;
+        return track !== undefined &&
+            ((track as RemoteAudioTrack).attach !== undefined ||
+            (track as RemoteVideoTrack).attach !== undefined);
     }
 
     private isDetachable(track: RemoteTrack): track is RemoteAudioTrack | RemoteVideoTrack {
-        return !!track
-            && (track as RemoteAudioTrack).detach !== undefined
-            || (track as RemoteVideoTrack).detach !== undefined;
+        return track !== undefined &&
+            ((track as RemoteAudioTrack).detach !== undefined ||
+            (track as RemoteVideoTrack).detach !== undefined);
     }
 }

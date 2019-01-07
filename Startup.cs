@@ -1,4 +1,5 @@
 using IEvangelist.VideoChat.Abstractions;
+using IEvangelist.VideoChat.Hubs;
 using IEvangelist.VideoChat.Options;
 using IEvangelist.VideoChat.Services;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,8 @@ namespace IEvangelist.VideoChat
             {
                 c.SwaggerDoc("v1", new Info { Title = "IEvangelist.VideoChat", Version = "v1" });
             });
+
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -48,6 +51,10 @@ namespace IEvangelist.VideoChat
                .UseStaticFiles()
                .UseSpaStaticFiles();
 
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotificationHub>("/notificationHub");
+            });
             app.UseMvc(routes =>
                 {
                     routes.MapRoute(

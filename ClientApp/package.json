@@ -24,6 +24,7 @@
     "@angular/platform-server": "^5.2.0",
     "@angular/router": "^5.2.0",
     "@nguniversal/module-map-ngfactory-loader": "^5.0.0-beta.5",
+    "@aspnet/signalr": "1.1.0",
     "aspnet-prerendering": "^3.0.1",
     "bootstrap": "^4.2.1",
     "core-js": "^2.4.1",
