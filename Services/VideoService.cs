@@ -31,7 +31,7 @@ namespace IEvangelist.VideoChat.Services
             => new Token(_twilioSettings.AccountSid,
                          _twilioSettings.ApiKey,
                          _twilioSettings.ApiSecret,
-                         identity,
+                         identity ?? GetName(),
                          grants: new HashSet<IGrant>
                          {
                              new VideoGrant { Room = roomName }
@@ -59,5 +59,43 @@ namespace IEvangelist.VideoChat.Services
                 };
             }
         }
+
+        #region Borrowed from https://github.com/twilio/video-quickstart-js/blob/1.x/server/randomname.js
+
+        readonly string[] _adjectives =
+        {
+            "Abrasive", "Brash", "Callous", "Daft", "Eccentric", "Feisty", "Golden",
+            "Holy", "Ignominious", "Luscious", "Mushy", "Nasty",
+            "OldSchool", "Pompous", "Quiet", "Rowdy", "Sneaky", "Tawdry",
+            "Unique", "Vivacious", "Wicked", "Xenophobic", "Yawning", "Zesty"
+        };
+
+        readonly string[] _firstNames =
+        {
+            "Anna", "Bobby", "Cameron", "Danny", "Emmett", "Frida", "Gracie", "Hannah",
+            "Isaac", "Jenova", "Kendra", "Lando", "Mufasa", "Nate", "Owen", "Penny",
+            "Quincy", "Roddy", "Samantha", "Tammy", "Ulysses", "Victoria", "Wendy",
+            "Xander", "Yolanda", "Zelda"
+        };
+
+        readonly string[] _lastNames =
+        {
+            "Anchorage", "Berlin", "Cucamonga", "Davenport", "Essex", "Fresno",
+            "Gunsight", "Hanover", "Indianapolis", "Jamestown", "Kane", "Liberty",
+            "Minneapolis", "Nevis", "Oakland", "Portland", "Quantico", "Raleigh",
+            "SaintPaul", "Tulsa", "Utica", "Vail", "Warsaw", "XiaoJin", "Yale",
+            "Zimmerman"
+        };
+
+        string GetName() => $"{_adjectives.Random()} {_firstNames.Random()} {_lastNames.Random()}";
+
+        #endregion
+    }
+
+    static class StringArrayExtensions
+    {
+        static readonly Random _random = new Random((int)DateTime.Now.Ticks);
+
+        internal static string Random(this IReadOnlyList<string> array) => array[_random.Next(array.Count)];
     }
 }
