@@ -1,5 +1,6 @@
 :host,
-#participant-list {
+#participant-list,
+video {
     width: 100% !important;
     height: 100% !important;
 }
@@ -9,8 +10,16 @@
     background-color: rgb(38, 38, 38);
 }
 
+.hidden {
+    display: none;
+}
+
 #alone {
     height: 100%;
+}
+
+#alone.table {
+    display: table;
 }
 
 div > p {

@@ -35,7 +35,7 @@ export class ParticipantsComponent implements AfterViewInit {
     }
 
     get isAlone() {
-        return !this.list || !this.list.querySelectorAll('video').length;
+        return this.participantCount === 0;
     }
 
     private participants: Map<Participant.SID, RemoteParticipant>;
@@ -60,7 +60,7 @@ export class ParticipantsComponent implements AfterViewInit {
     }
 
     add(participant: RemoteParticipant) {
-        if (this.participants && !this.participants.has(participant.sid)) {
+        if (this.participants && participant) {
             this.participants.set(participant.sid, participant);
             this.registerParticipantEvents(participant);
         }
@@ -105,7 +105,10 @@ export class ParticipantsComponent implements AfterViewInit {
             const element = track.attach();
             element.dataset.id = track.sid;
             if (track.kind === 'video') {
-                element.style.height = element.style.width = '100%';
+                this.list
+                    .getAttributeNames()
+                    .filter(attr => attr.startsWith('_ng'))
+                    .forEach(a => element.setAttribute(a, ''));
             }
             this.list.appendChild(element);
             this.participantsChanged.emit(this.participantCount);
