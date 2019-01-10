@@ -15,7 +15,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
 
     roomName: string;
     rooms: NamedRoom[];
-    roomParticipants = new Map<string, number>();
 
     private subscription: Subscription;
 
@@ -54,22 +53,5 @@ export class RoomsComponent implements OnInit, OnDestroy {
 
     async updateRooms() {
         this.rooms = (await this.videoChatService.getAllRooms()) as NamedRoom[];
-    }
-
-    updateParticipantCount(name: string, count: number) {
-        this.roomParticipants[name] = count;
-    }
-
-    tryGetParticipantCount(name: string) {
-        const addOne = this.activeRoomName === name;
-        if (this.roomParticipants.has(name)) {
-            let count = this.roomParticipants.get(name);
-            if (addOne) {
-                count += 1;
-            }
-            return count;
-        }
-
-        return addOne ? 1 : 0;
     }
 }

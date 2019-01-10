@@ -1,5 +1,5 @@
+import { Component, ElementRef, ViewChild, AfterViewInit, Renderer2 } from '@angular/core';
 import { createLocalTracks, LocalTrack, LocalVideoTrack } from 'twilio-video';
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { StorageService } from '../services/storage.service';
 
 @Component({
@@ -16,15 +16,15 @@ export class CameraComponent implements AfterViewInit {
 
     isInitializing: boolean = true;
 
-    private preview: HTMLDivElement;
     private videoTrack: LocalVideoTrack;
     private localTracks: LocalTrack[] = [];
 
-    constructor(private readonly storageService: StorageService) { }
+    constructor(
+        private readonly storageService: StorageService,
+        private readonly renderer: Renderer2) { }
 
     async ngAfterViewInit() {
         if (this.previewElement && this.previewElement.nativeElement) {
-            this.preview = this.previewElement.nativeElement as HTMLDivElement;
             const selectedVideoInput = this.storageService.get('videoInputId');
             await this.initializeDevice('videoinput', selectedVideoInput);
         }
@@ -62,11 +62,9 @@ export class CameraComponent implements AfterViewInit {
 
             this.videoTrack = this.localTracks.find(t => t.kind === 'video') as LocalVideoTrack;
             const videoElement = this.videoTrack.attach();
-            this.preview
-                .getAttributeNames()
-                .filter(attr => attr.startsWith('_ng'))
-                .forEach(a => videoElement.setAttribute(a, ''));
-            this.preview.appendChild(videoElement);
+            this.renderer.setStyle(videoElement, 'height', '100%');
+            this.renderer.setStyle(videoElement, 'width', '100%');
+            this.renderer.appendChild(this.previewElement.nativeElement, videoElement);
         } finally {
             this.isInitializing = false;
         }

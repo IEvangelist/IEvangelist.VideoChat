@@ -2,9 +2,10 @@ import {
     Component,
     ViewChild,
     ElementRef,
-    AfterViewInit,
     Output,
-    EventEmitter
+    Input,
+    EventEmitter,
+    Renderer2
 } from '@angular/core';
 import {
     Participant,
@@ -20,18 +21,14 @@ import {
     styleUrls: ['./participants.component.css'],
     templateUrl: './participants.component.html',
 })
-export class ParticipantsComponent implements AfterViewInit {
+export class ParticipantsComponent {
     @ViewChild('list') listRef: ElementRef;
-    @Output('participantsChanged') participantsChanged = new EventEmitter<number>();
+    @Output('participantsChanged') participantsChanged = new EventEmitter<boolean>();
     @Output('leaveRoom') leaveRoom = new EventEmitter<boolean>();
+    @Input('activeRoomName') activeRoomName: string;
 
-    private get participantCount() {
-        if (this.list) {
-            const videos = this.list.querySelectorAll('video[data-id]');
-            return videos.length;
-        }
-
-        return 0;
+    get participantCount() {
+        return !!this.participants ? this.participants.size : 0;
     }
 
     get isAlone() {
@@ -40,16 +37,13 @@ export class ParticipantsComponent implements AfterViewInit {
 
     private participants: Map<Participant.SID, RemoteParticipant>;
     private dominantSpeaker: RemoteParticipant;
-    private list: HTMLDivElement;
 
-    ngAfterViewInit() {
-        if (this.listRef && this.listRef.nativeElement) {
-            this.list = this.listRef.nativeElement as HTMLDivElement;
-        }
-    }
+    constructor(private readonly renderer: Renderer2) { }
 
     clear() {
-        this.participants.clear();
+        if (this.participants) {
+            this.participants.clear();
+        }
     }
 
     initialize(participants: Map<Participant.SID, RemoteParticipant>) {
@@ -103,22 +97,18 @@ export class ParticipantsComponent implements AfterViewInit {
     private attachRemoteTrack(track: RemoteTrack) {
         if (this.isAttachable(track)) {
             const element = track.attach();
-            element.dataset.id = track.sid;
-            if (track.kind === 'video') {
-                this.list
-                    .getAttributeNames()
-                    .filter(attr => attr.startsWith('_ng'))
-                    .forEach(a => element.setAttribute(a, ''));
-            }
-            this.list.appendChild(element);
-            this.participantsChanged.emit(this.participantCount);
+            this.renderer.data.id = track.sid;
+            this.renderer.setStyle(element, 'height', '100%');
+            this.renderer.setStyle(element, 'width', '100%');
+            this.renderer.appendChild(this.listRef.nativeElement, element);
+            this.participantsChanged.emit(true);
         }
     }
 
     private detachRemoteTrack(track: RemoteTrack) {
         if (this.isDetachable(track)) {
             track.detach().forEach(el => el.remove());
-            this.participantsChanged.emit(this.participantCount);
+            this.participantsChanged.emit(true);
         }
     }
 

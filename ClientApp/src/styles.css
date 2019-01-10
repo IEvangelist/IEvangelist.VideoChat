@@ -11388,6 +11388,8 @@ a.text-dark:hover, a.text-dark:focus {
 .spinner .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 @-webkit-keyframes sk-bouncedelay {

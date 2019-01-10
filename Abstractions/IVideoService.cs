@@ -6,7 +6,7 @@ namespace IEvangelist.VideoChat.Abstractions
 {
     public interface IVideoService
     {
-        string GetTwilioJwt(string identity, string roomName);
+        string GetTwilioJwt(string identity);
 
         Task<IEnumerable<RoomDetails>> GetAllRoomsAsync();
     }

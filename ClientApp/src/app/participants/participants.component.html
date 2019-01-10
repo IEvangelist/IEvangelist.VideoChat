@@ -1,5 +1,5 @@
 <div id="participant-list">
-    <div id="alone" [ngClass]="{ 'table': isAlone, 'hidden': !isAlone }">
+    <div id="alone" [ngClass]="{ 'table': isAlone, 'd-none': !isAlone }">
         <p class="text-center text-monospace h3" style="display: table-cell">
             You're the only one in this room. <i class="far fa-frown"></i>
             <br />
@@ -14,10 +14,17 @@
         Clicking a participant will make them their video most prominent.
         Future: Watch for the dominantSpeaker feature to be implemented and do this automatically.
     -->
-    <div #list [ngClass]="{ 'hidden': isAlone }">
-        <button type="button" class="close float-right"
-                title="Click to leave this room." (click)="onLeaveRoom()">
-            <i class="fas fa-2x fa-times-circle" style="color: #F22F46"></i>
-        </button>
+    <div [ngClass]="{ 'd-none': isAlone }">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-light shadow">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-lg leave-room"
+                            title="Click to leave this room." (click)="onLeaveRoom()">
+                        Leave "{{ activeRoomName }}" Room?
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <div #list></div>
     </div>
 </div>

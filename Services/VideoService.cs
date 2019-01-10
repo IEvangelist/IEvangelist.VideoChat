@@ -6,8 +6,11 @@ using IEvangelist.VideoChat.Abstractions;
 using IEvangelist.VideoChat.Models;
 using IEvangelist.VideoChat.Options;
 using Twilio;
+using Twilio.Base;
 using Twilio.Jwt.AccessToken;
 using Twilio.Rest.Video.V1;
+using Twilio.Rest.Video.V1.Room;
+using ParticipantStatus = Twilio.Rest.Video.V1.Room.ParticipantResource.StatusEnum;
 
 namespace IEvangelist.VideoChat.Services
 {
@@ -24,7 +27,7 @@ namespace IEvangelist.VideoChat.Services
             TwilioClient.Init(_twilioSettings.ApiKey, _twilioSettings.ApiSecret);
         }
 
-        public string GetTwilioJwt(string identity, string roomName)
+        public string GetTwilioJwt(string identity)
             => new Token(_twilioSettings.AccountSid,
                          _twilioSettings.ApiKey,
                          _twilioSettings.ApiSecret,
@@ -34,12 +37,27 @@ namespace IEvangelist.VideoChat.Services
         public async Task<IEnumerable<RoomDetails>> GetAllRoomsAsync()
         {
             var rooms = await RoomResource.ReadAsync();
-            return rooms.Select(room => new RoomDetails
+            var tasks = rooms.Select(
+                room => GetRoomDetailsAsync(
+                    room,
+                    ParticipantResource.ReadAsync(
+                        room.Sid,
+                        ParticipantStatus.Connected)));
+
+            return await Task.WhenAll(tasks);
+
+            async Task<RoomDetails> GetRoomDetailsAsync(
+                RoomResource room,
+                Task<ResourceSet<ParticipantResource>> participantTask)
             {
-                Id = room.Sid,
-                Name = room.UniqueName,
-                MaxParticipants = room.MaxParticipants ?? 0
-            });
+                var participants = await participantTask;
+                return new RoomDetails
+                {
+                    Name = room.UniqueName,
+                    MaxParticipants = room.MaxParticipants ?? 0,
+                    Participants = participants.ToList().Count
+                };
+            }
         }
 
         #region Borrowed from https://github.com/twilio/video-quickstart-js/blob/1.x/server/randomname.js

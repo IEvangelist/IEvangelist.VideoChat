@@ -26,10 +26,10 @@ export class VideoChatService {
         this.$roomsUpdated = this.roomBroadcast.asObservable();
     }
 
-    private async getAuthToken(name: string) {
+    private async getAuthToken() {
         const auth =
             await this.http
-                      .get<AuthToken>(`api/video/token/${name}`)
+                      .get<AuthToken>(`api/video/token`)
                       .toPromise();
 
         return auth.token;
@@ -44,7 +44,7 @@ export class VideoChatService {
     async joinOrCreateRoom(name: string, tracks: LocalTrack[]) {
         let room: Room = null;
         try {
-            const token = await this.getAuthToken(name);
+            const token = await this.getAuthToken();
             room =
                 await connect(
                     token, {
@@ -61,5 +61,9 @@ export class VideoChatService {
         }
 
         return room;
+    }
+
+    nudge() {
+        this.roomBroadcast.next(true);
     }
 }

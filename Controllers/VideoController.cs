@@ -12,9 +12,9 @@ namespace IEvangelist.VideoChat.Controllers
         public VideoController(IVideoService videoService) 
             => _videoService = videoService;
 
-        [HttpGet("token/{roomName?}")]
-        public IActionResult GetToken(string roomName)
-            => Json(new { token = _videoService.GetTwilioJwt(User.Identity.Name, roomName) });
+        [HttpGet("token")]
+        public IActionResult GetToken()
+            => Json(new { token = _videoService.GetTwilioJwt(User.Identity.Name) });
 
         [HttpGet("rooms")]
         public async Task<IActionResult> GetRooms() 

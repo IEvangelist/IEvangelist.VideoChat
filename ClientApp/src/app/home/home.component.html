@@ -8,9 +8,10 @@
     <div class="grid-content">
         <app-camera #camera [style.display]="!!activeRoom ? 'none' : 'block'"></app-camera>
         <app-participants #participants
+                          (leaveRoom)="onLeaveRoom($event)"
                           (participantsChanged)="onParticipantsChanged($event)"
-                          (leaveRoom)="onLeaveRoom()"
-                          [style.display]="!!activeRoom ? 'block' : 'none'"></app-participants>
+                          [style.display]="!!activeRoom ? 'block' : 'none'"
+                          [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
     </div>
     <div class="grid-right">
         <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>

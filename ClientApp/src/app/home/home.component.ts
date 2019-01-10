@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
         await this.camera.initializePreview(deviceInfo);
     }
 
-    async onLeaveRoom() {
+    async onLeaveRoom(_: boolean) {
         if (this.activeRoom) {
             this.activeRoom.disconnect();
             this.activeRoom = null;
@@ -71,30 +71,32 @@ export class HomeComponent implements OnInit {
                           .joinOrCreateRoom(roomName, tracks);
 
             this.participants.initialize(this.activeRoom.participants);
-
-            this.activeRoom
-                .on('disconnected',
-                    (room: Room) => {
-                        room.localParticipant.tracks.forEach(publication => {
-                            if (this.isDetachable(publication.track)) {
-                                const attachedElements = publication.track.detach();
-                                attachedElements.forEach(element => element.remove());
-                            }
-                        });
-                    })
-                .on('participantConnected',
-                    (participant: RemoteParticipant) => this.participants.add(participant))
-                .on('participantDisconnected',
-                    (participant: RemoteParticipant) => this.participants.remove(participant))
-                .on('dominantSpeakerChanged',
-                    (dominantSpeaker: RemoteParticipant) => this.participants.loudest(dominantSpeaker));
+            this.registerRoomEvents();
 
             this.notificationHub.send('RoomsUpdated', true);
         }
     }
 
-    onParticipantsChanged(participantCount: number) {
-        this.rooms.updateParticipantCount(this.activeRoom.name, participantCount);
+    onParticipantsChanged(_: boolean) {
+        this.videoChatService.nudge();
+    }
+
+    private registerRoomEvents() {
+        this.activeRoom
+            .on('disconnected',
+                (room: Room) => room.localParticipant.tracks.forEach(publication => this.detachLocalTrack(publication.track)))
+            .on('participantConnected',
+                (participant: RemoteParticipant) => this.participants.add(participant))
+            .on('participantDisconnected',
+                (participant: RemoteParticipant) => this.participants.remove(participant))
+            .on('dominantSpeakerChanged',
+                (dominantSpeaker: RemoteParticipant) => this.participants.loudest(dominantSpeaker));
+    }
+
+    private detachLocalTrack(track: LocalTrack) {
+        if (this.isDetachable(track)) {
+            track.detach().forEach(el => el.remove());
+        }
     }
 
     private isDetachable(track: LocalTrack): track is LocalAudioTrack | LocalVideoTrack {
