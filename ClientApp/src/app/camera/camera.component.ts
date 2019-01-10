@@ -10,15 +10,15 @@ import { StorageService } from '../services/storage.service';
 export class CameraComponent implements AfterViewInit {
     @ViewChild('preview') previewElement: ElementRef;
 
-    private preview: HTMLDivElement;
-    private videoTrack: LocalVideoTrack;
-    private localTracks: LocalTrack[] = [];
-
     get tracks(): LocalTrack[] {
         return this.localTracks;
     }
 
     isInitializing: boolean = true;
+
+    private preview: HTMLDivElement;
+    private videoTrack: LocalVideoTrack;
+    private localTracks: LocalTrack[] = [];
 
     constructor(private readonly storageService: StorageService) { }
 
@@ -35,6 +35,16 @@ export class CameraComponent implements AfterViewInit {
             this.initializeDevice(deviceInfo.kind, deviceInfo.deviceId);
         } else {
             this.initializeDevice();
+        }
+    }
+
+    finalizePreview() {
+        try {
+            if (this.videoTrack) {
+                this.videoTrack.detach().forEach(element => element.remove());
+            }
+        } catch (e) {
+            console.error(e);
         }
     }
 

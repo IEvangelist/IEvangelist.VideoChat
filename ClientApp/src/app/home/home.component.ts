@@ -8,18 +8,19 @@ import { VideoChatService } from '../services/videochat.service';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
 
 @Component({
-    selector: 'app-layout',
-    styleUrls: ['./layout.component.css'],
-    templateUrl: './layout.component.html',
+    selector: 'app-home',
+    styleUrls: ['./home.component.css'],
+    templateUrl: './home.component.html',
 })
-export class LayoutComponent implements OnInit {
+export class HomeComponent implements OnInit {
     @ViewChild('rooms') rooms: RoomsComponent;
     @ViewChild('camera') camera: CameraComponent;
     @ViewChild('settings') settings: SettingsComponent;
     @ViewChild('participants') participants: ParticipantsComponent;
 
+    activeRoom: Room;
+
     private notificationHub: HubConnection;
-    private activeRoom: Room;
 
     constructor(
         private readonly videoChatService: VideoChatService) { }
@@ -27,7 +28,7 @@ export class LayoutComponent implements OnInit {
     ngOnInit() {
         const builder =
             new HubConnectionBuilder()
-                .configureLogging(LogLevel.Trace)
+                .configureLogging(LogLevel.Information)
                 .withUrl(`${location.origin}/notificationHub`);
 
         this.notificationHub = builder.build();
@@ -43,15 +44,31 @@ export class LayoutComponent implements OnInit {
         await this.camera.initializePreview(deviceInfo);
     }
 
+    async onLeaveRoom() {
+        if (this.activeRoom) {
+            this.activeRoom.disconnect();
+            this.activeRoom = null;
+        }
+
+        this.camera.finalizePreview();
+        const videoDevice = this.settings.hidePreviewCamera();
+        this.camera.initializePreview(videoDevice);
+
+        this.participants.clear();
+    }
+
     async onRoomChanged(roomName: string) {
         if (roomName) {
             if (this.activeRoom) {
                 this.activeRoom.disconnect();
             }
 
+            this.camera.finalizePreview();
+            const tracks = await this.settings.showPreviewCamera();
+
             this.activeRoom =
                 await this.videoChatService
-                          .joinOrCreateRoom(roomName, this.camera.tracks);
+                          .joinOrCreateRoom(roomName, tracks);
 
             this.participants.initialize(this.activeRoom.participants);
 
@@ -70,15 +87,19 @@ export class LayoutComponent implements OnInit {
                 .on('participantDisconnected',
                     (participant: RemoteParticipant) => this.participants.remove(participant))
                 .on('dominantSpeakerChanged',
-                (dominantSpeaker: RemoteParticipant) => this.participants.loudest(dominantSpeaker));
+                    (dominantSpeaker: RemoteParticipant) => this.participants.loudest(dominantSpeaker));
 
             this.notificationHub.send('RoomsUpdated', true);
         }
     }
 
+    onParticipantsChanged(participantCount: number) {
+        this.rooms.updateParticipantCount(this.activeRoom.name, participantCount);
+    }
+
     private isDetachable(track: LocalTrack): track is LocalAudioTrack | LocalVideoTrack {
         return !!track
-            && (track as LocalAudioTrack).detach !== undefined
-            || (track as LocalVideoTrack).detach !== undefined;
+            && ((track as LocalAudioTrack).detach !== undefined
+            || (track as LocalVideoTrack).detach !== undefined);
     }
 }

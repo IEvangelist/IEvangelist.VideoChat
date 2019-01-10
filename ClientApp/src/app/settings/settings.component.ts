@@ -1,4 +1,14 @@
-import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    OnDestroy,
+    EventEmitter,
+    Input,
+    Output,
+    ViewChild
+} from '@angular/core';
+import { CameraComponent } from '../camera/camera.component';
+import { DeviceSelectComponent } from './device-select.component';
 import { DeviceService } from '../services/device.service';
 import { Subscription } from 'rxjs';
 
@@ -10,6 +20,7 @@ import { Subscription } from 'rxjs';
 export class SettingsComponent implements OnInit, OnDestroy {
     private devices: MediaDeviceInfo[] = [];
     private subscription: Subscription;
+    private videoDeviceId: string;
 
     get hasAudioInputOptions(): boolean {
         return this.devices && this.devices.filter(d => d.kind === 'audioinput').length > 0;
@@ -21,6 +32,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
         return this.devices && this.devices.filter(d => d.kind === 'videoinput').length > 0;
     }
 
+    @ViewChild('camera') camera: CameraComponent;
+    @ViewChild('videoSelect') video: DeviceSelectComponent;
+
+    @Input('isPreviewing') isPreviewing: boolean;
     @Output() settingsChanged = new EventEmitter<MediaDeviceInfo>();
 
     constructor(
@@ -39,7 +54,29 @@ export class SettingsComponent implements OnInit, OnDestroy {
         }
     }
 
-    onSettingsChanged(deviceInfo: MediaDeviceInfo) {
-        this.settingsChanged.emit(deviceInfo);
+    async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
+        if (this.isPreviewing) {
+            await this.showPreviewCamera();
+        } else {
+            this.settingsChanged.emit(deviceInfo);
+        }
+    }
+
+    async showPreviewCamera() {
+        this.isPreviewing = true;
+
+        if (this.videoDeviceId !== this.video.selectedId) {
+            this.videoDeviceId = this.video.selectedId;
+            const videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
+            await this.camera.initializePreview(videoDevice);
+        }
+        
+        return this.camera.tracks;
+    }
+
+    hidePreviewCamera() {
+        this.isPreviewing = false;
+        this.camera.finalizePreview();
+        return this.devices.find(d => d.deviceId === this.video.selectedId);
     }
 }

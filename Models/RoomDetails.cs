@@ -2,6 +2,8 @@
 {
     public class RoomDetails
     {
+        public string Id { get; set; }
+
         public string Name { get; set; }
 
         public int Participants { get; set; }

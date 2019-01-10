@@ -14,7 +14,7 @@ namespace IEvangelist.VideoChat.Controllers
 
         [HttpGet("token/{roomName?}")]
         public IActionResult GetToken(string roomName)
-            => Json(new { token = _videoService.GetTwilioJwt(User.Identity.Name ?? "guest", roomName) });
+            => Json(new { token = _videoService.GetTwilioJwt(User.Identity.Name, roomName) });
 
         [HttpGet("rooms")]
         public async Task<IActionResult> GetRooms() 

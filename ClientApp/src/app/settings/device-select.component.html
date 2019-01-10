@@ -1,5 +1,5 @@
 <label for="{{ id }}">{{ label }}</label>
-<select class="form-control form-control-lg" id="{{ id }}"
+<select class="custom-select" id="{{ id }}"
         (change)="onSettingsChanged($event.target.value)">
     <option *ngFor="let device of devices"
             [value]="device.deviceId" [selected]="device.deviceId === selectedId">

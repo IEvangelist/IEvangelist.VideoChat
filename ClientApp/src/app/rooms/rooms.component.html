@@ -5,7 +5,7 @@
             <div class="input-group">
                 <input type="text" class="form-control form-control-lg"
                        placeholder="Room Name" aria-label="Room Name"
-                       [(ngModel)]="roomName">
+                       [(ngModel)]="roomName" (keydown.enter)="onTryAddRoom()">
                 <div class="input-group-append">
                     <button class="btn btn-lg btn-outline-secondary twitter-red"
                             type="button" [disabled]="!roomName"
@@ -21,10 +21,12 @@
             </p>
         </div>
         <a href="#" *ngFor="let room of rooms"
-           (click)="onJoinRoom(room.name)"
+           (click)="onJoinRoom(room.name)" [ngClass]="{ 'active': activeRoomName === room.name }"
            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             {{ room.name }}
-            <span class="badge badge-primary badge-pill">{{ room.participants }} / {{ room.maxParticipants }}</span>
+            <span class="badge badge-primary badge-pill">
+                {{ tryGetParticipantCount(room.name) }} / {{ room.maxParticipants }}
+            </span>
         </a>
     </div>
 </div>

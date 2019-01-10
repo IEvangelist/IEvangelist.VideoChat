@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { LayoutComponent } from './layout/layout.component';
+import { HomeComponent } from './home/home.component';
 import { RoomsComponent } from './rooms/rooms.component';
 import { ParticipantsComponent } from './participants/participants.component';
 import { CameraComponent } from './camera/camera.component';
@@ -19,7 +19,7 @@ import { StorageService } from './services/storage.service';
 @NgModule({
     declarations: [
         AppComponent,
-        LayoutComponent,
+        HomeComponent,
         RoomsComponent,
         ParticipantsComponent,
         CameraComponent,

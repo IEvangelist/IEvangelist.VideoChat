@@ -1,10 +1,18 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import {
+    Component,
+    ViewChild,
+    ElementRef,
+    AfterViewInit,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import {
     Participant,
     RemoteTrack,
     RemoteAudioTrack,
     RemoteVideoTrack,
-    RemoteParticipant
+    RemoteParticipant,
+    RemoteTrackPublication
 } from 'twilio-video';
 
 @Component({
@@ -13,11 +21,26 @@ import {
     templateUrl: './participants.component.html',
 })
 export class ParticipantsComponent implements AfterViewInit {
+    @ViewChild('list') listRef: ElementRef;
+    @Output('participantsChanged') participantsChanged = new EventEmitter<number>();
+    @Output('leaveRoom') leaveRoom = new EventEmitter<boolean>();
+
+    private get participantCount() {
+        if (this.list) {
+            const videos = this.list.querySelectorAll('video[data-id]');
+            return videos.length;
+        }
+
+        return 0;
+    }
+
+    get isAlone() {
+        return !this.list || !this.list.querySelectorAll('video').length;
+    }
+
     private participants: Map<Participant.SID, RemoteParticipant>;
     private dominantSpeaker: RemoteParticipant;
-
     private list: HTMLDivElement;
-    @ViewChild('list') listRef: ElementRef;
 
     ngAfterViewInit() {
         if (this.listRef && this.listRef.nativeElement) {
@@ -25,25 +48,21 @@ export class ParticipantsComponent implements AfterViewInit {
         }
     }
 
+    clear() {
+        this.participants.clear();
+    }
+
     initialize(participants: Map<Participant.SID, RemoteParticipant>) {
         this.participants = participants;
         if (this.participants) {
-            this.participants.forEach(participant => {
-                participant.tracks.forEach(pub => {
-                    if (pub.isSubscribed) {
-                        const track = pub.track;
-                        if (this.isAttachable(track)) {
-                            this.list.appendChild(track.attach());
-                        }
-                    }
-                });
-            });
+            this.participants.forEach(participant => this.registerParticipantEvents(participant));
         }
     }
 
     add(participant: RemoteParticipant) {
         if (this.participants && !this.participants.has(participant.sid)) {
             this.participants.set(participant.sid, participant);
+            this.registerParticipantEvents(participant);
         }
     }
 
@@ -57,14 +76,57 @@ export class ParticipantsComponent implements AfterViewInit {
         this.dominantSpeaker = participant;
     }
 
+    onLeaveRoom() {
+        this.leaveRoom.emit(true);
+    }
+
+    private registerParticipantEvents(participant: RemoteParticipant) {
+        if (participant) {
+            participant.tracks.forEach(publication => this.subscribe(publication));
+            participant.on('trackPublished', publication => this.subscribe(publication));
+            participant.on('trackUnpublished',
+                publication => {
+                    if (publication && publication.track) {
+                        this.detachRemoteTrack(publication.track);
+                    }
+                });
+        }
+    }
+
+    private subscribe(publication: RemoteTrackPublication | any) {
+        if (publication && publication.on) {
+            publication.on('subscribed', track => this.attachRemoteTrack(track));
+            publication.on('unsubscribed', track => this.detachRemoteTrack(track));
+        }
+    }
+
+    private attachRemoteTrack(track: RemoteTrack) {
+        if (this.isAttachable(track)) {
+            const element = track.attach();
+            element.dataset.id = track.sid;
+            if (track.kind === 'video') {
+                element.style.height = element.style.width = '100%';
+            }
+            this.list.appendChild(element);
+            this.participantsChanged.emit(this.participantCount);
+        }
+    }
+
+    private detachRemoteTrack(track: RemoteTrack) {
+        if (this.isDetachable(track)) {
+            track.detach().forEach(el => el.remove());
+            this.participantsChanged.emit(this.participantCount);
+        }
+    }
+
     private isAttachable(track: RemoteTrack): track is RemoteAudioTrack | RemoteVideoTrack {
-        return track !== undefined &&
+        return !!track &&
             ((track as RemoteAudioTrack).attach !== undefined ||
             (track as RemoteVideoTrack).attach !== undefined);
     }
 
     private isDetachable(track: RemoteTrack): track is RemoteAudioTrack | RemoteVideoTrack {
-        return track !== undefined &&
+        return !!track &&
             ((track as RemoteAudioTrack).detach !== undefined ||
             (track as RemoteVideoTrack).detach !== undefined);
     }

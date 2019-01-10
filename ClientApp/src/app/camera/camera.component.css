@@ -1,6 +1,5 @@
 :host,
-#preview,
-video {
+#preview {
     width: 100% !important;
     height: 100% !important;
 }

@@ -1,1 +1,23 @@
-<div #list></div>
+<div id="participant-list">
+    <div id="alone" [style.display]="isAlone ? 'table' : 'none'">
+        <p class="text-center text-monospace h3" style="display: table-cell">
+            You're the only one in this room. <i class="far fa-frown"></i>
+            <br />
+            <br />
+            As others join, they'll start showing up here...
+        </p>
+    </div>
+    <!--
+        TODO:
+        Add a list of participants, by their identity.
+        Make the list items become a click target.
+        Clicking a participant will make them their video most prominent.
+        Future: Watch for the dominantSpeaker feature to be implemented and do this automatically.
+    -->
+    <div #list [style.display]="isAlone ? 'none' : 'display'">
+        <button type="button" class="close float-right"
+                title="Click to leave this room." (click)="onLeaveRoom()">
+            <i class="fas fa-2x fa-times-circle" style="color: #F22F46"></i>
+        </button>
+    </div>
+</div>

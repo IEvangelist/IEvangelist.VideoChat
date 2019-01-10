@@ -3,11 +3,14 @@
         <a href="https://twitter.com/davidpine7" target="_blank"><i class="fab fa-twitter"></i> @davidpine7</a>
     </div>
     <div class="grid-left">
-        <app-rooms #rooms (roomChanged)="onRoomChanged($event)"></app-rooms>
+        <app-rooms #rooms (roomChanged)="onRoomChanged($event)" [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
     </div>
     <div class="grid-content">
-        <app-camera #camera></app-camera>
-        <app-participants #participants></app-participants>
+        <app-camera #camera [style.display]="!!activeRoom ? 'none' : 'block'"></app-camera>
+        <app-participants #participants
+                          (participantsChanged)="onParticipantsChanged($event)"
+                          (leaveRoom)="onLeaveRoom()"
+                          [style.display]="!!activeRoom ? 'block' : 'none'"></app-participants>
     </div>
     <div class="grid-right">
         <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>

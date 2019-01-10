@@ -8,6 +8,7 @@ interface AuthToken {
 }
 
 export interface NamedRoom {
+    id: string;
     name: string;
     maxParticipants?: number;
     participants: number;
@@ -17,9 +18,9 @@ export type Rooms = NamedRoom[];
 
 @Injectable()
 export class VideoChatService {
-    private roomBroadcast = new ReplaySubject<boolean>();
-
     $roomsUpdated: Observable<boolean>;
+
+    private roomBroadcast = new ReplaySubject<boolean>();
 
     constructor(private readonly http: HttpClient) {
         this.$roomsUpdated = this.roomBroadcast.asObservable();
@@ -45,16 +46,20 @@ export class VideoChatService {
         try {
             const token = await this.getAuthToken(name);
             room =
-                await connect(token, {
+                await connect(
+                    token, {
                         name,
                         tracks,
                         dominantSpeaker: true
                     } as ConnectOptions);
         } catch (error) {
             console.error(`Unable to connect to Room: ${error.message}`);
+        } finally {
+            if (room) {
+                this.roomBroadcast.next(true);
+            }
         }
 
-        this.roomBroadcast.next(true);
         return room;
     }
 }
