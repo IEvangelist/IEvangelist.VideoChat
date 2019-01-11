@@ -66,6 +66,13 @@ div.grid-bottom-right > a {
     max-width: 225px;
 }
 
+@media only screen and (max-height: 1000px) {
+    .grid-top-left > img {
+        max-height: 50px;
+        max-width: 187.5px;
+    }
+}
+
 .grid-top-left > a:hover > img {
     filter: brightness(110%);
 }
