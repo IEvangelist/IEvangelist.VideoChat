@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IEvangelist.VideoChat.Controllers
 {
-    [Route("api/video")]
-    public class VideoController : Controller
+    [
+        ApiController,
+        Route("api/video")
+    ]
+    public class VideoController : ControllerBase
     {
         readonly IVideoService _videoService;
 
@@ -14,10 +17,10 @@ namespace IEvangelist.VideoChat.Controllers
 
         [HttpGet("token")]
         public IActionResult GetToken()
-            => Json(new { token = _videoService.GetTwilioJwt(User.Identity.Name) });
+            => new JsonResult(new { token = _videoService.GetTwilioJwt(User.Identity.Name) });
 
         [HttpGet("rooms")]
         public async Task<IActionResult> GetRooms() 
-            => Json(await _videoService.GetAllRoomsAsync());
+            => new JsonResult(await _videoService.GetAllRoomsAsync());
     }
 }
