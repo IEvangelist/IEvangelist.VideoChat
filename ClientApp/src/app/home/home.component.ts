@@ -25,19 +25,19 @@ export class HomeComponent implements OnInit {
     constructor(
         private readonly videoChatService: VideoChatService) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         const builder =
             new HubConnectionBuilder()
                 .configureLogging(LogLevel.Information)
                 .withUrl(`${location.origin}/notificationHub`);
 
         this.notificationHub = builder.build();
-        this.notificationHub.on('OnRoomsUpdated', async updated => {
+        this.notificationHub.on('RoomsUpdated', async updated => {
             if (updated) {
                 await this.rooms.updateRooms();
             }
         });
-        this.notificationHub.start();
+        await this.notificationHub.start();
     }
 
     async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
