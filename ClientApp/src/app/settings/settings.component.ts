@@ -10,6 +10,7 @@ import {
 import { CameraComponent } from '../camera/camera.component';
 import { DeviceSelectComponent } from './device-select.component';
 import { DeviceService } from '../services/device.service';
+import { debounceTime } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -44,8 +45,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.subscription =
             this.deviceService
-                .onDevicesUpdated()
-                .subscribe(async deviceListPromise => this.devices = await deviceListPromise);
+                .$devicesUpdated
+                .pipe(debounceTime(500))
+                .subscribe(async deviceListPromise => {
+                    this.devices = await deviceListPromise;
+                    if (this.devices && this.devices.length && this.video && this.video.selectedId) {
+                        let videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
+                        if (!videoDevice) {
+                            videoDevice = this.devices.find(d => d.kind === 'videoinput');
+                            if (videoDevice) {
+                                this.video.selectedId = videoDevice.deviceId;
+                                this.onSettingsChanged(videoDevice);
+                            }
+                        }
+                    }
+                });
     }
 
     ngOnDestroy() {

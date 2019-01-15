@@ -1,17 +1,22 @@
 import { Injectable } from '@angular/core';
-import { ReplaySubject , Observable } from 'rxjs';
+import { ReplaySubject, Observable } from 'rxjs';
 
 export type Devices = MediaDeviceInfo[];
 
 @Injectable()
 export class DeviceService {
+    $devicesUpdated: Observable<Promise<Devices>>;
+
     private deviceBroadcast = new ReplaySubject<Promise<Devices>>();
 
     constructor() {
         if (navigator && navigator.mediaDevices) {
-            navigator.mediaDevices.ondevicechange = this.updateDeviceOptions;
+            navigator.mediaDevices.ondevicechange = (_: Event) => {
+                this.deviceBroadcast.next(this.getDeviceOptions());
+            }
         }
 
+        this.$devicesUpdated = this.deviceBroadcast.asObservable();
         this.deviceBroadcast.next(this.getDeviceOptions());
     }
 
@@ -22,13 +27,5 @@ export class DeviceService {
         }, [] as Devices);
         
         return devices;
-    }
-
-    onDevicesUpdated(): Observable<Promise<Devices>> {
-        return this.deviceBroadcast.asObservable();
-    }
-
-    private updateDeviceOptions(_: Event) {
-        this.deviceBroadcast.next(this.getDeviceOptions());
     }
 }
