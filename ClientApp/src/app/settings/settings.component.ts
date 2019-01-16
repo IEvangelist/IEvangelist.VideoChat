@@ -46,19 +46,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.subscription =
             this.deviceService
                 .$devicesUpdated
-                .pipe(debounceTime(500))
+                .pipe(debounceTime(350))
                 .subscribe(async deviceListPromise => {
                     this.devices = await deviceListPromise;
-                    if (this.devices && this.devices.length && this.video && this.video.selectedId) {
-                        let videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
-                        if (!videoDevice) {
-                            videoDevice = this.devices.find(d => d.kind === 'videoinput');
-                            if (videoDevice) {
-                                this.video.selectedId = videoDevice.deviceId;
-                                this.onSettingsChanged(videoDevice);
-                            }
-                        }
-                    }
+                    this.handleDeviceAvailabilityChanges();
                 });
     }
 
@@ -92,5 +83,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.isPreviewing = false;
         this.camera.finalizePreview();
         return this.devices.find(d => d.deviceId === this.video.selectedId);
+    }
+
+    private handleDeviceAvailabilityChanges() {
+        if (this.devices && this.devices.length && this.video && this.video.selectedId) {
+            let videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
+            if (!videoDevice) {
+                videoDevice = this.devices.find(d => d.kind === 'videoinput');
+                if (videoDevice) {
+                    this.video.selectedId = videoDevice.deviceId;
+                    this.onSettingsChanged(videoDevice);
+                }
+            }
+        }
     }
 }

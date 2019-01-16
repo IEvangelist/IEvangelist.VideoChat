@@ -23,7 +23,7 @@ namespace IEvangelist.VideoChat
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<TwilioSettings>(_configuration.GetSection(nameof(TwilioSettings)))
                     .AddTransient<IVideoService, VideoService>()
-                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist/ClientApp"; });
 
             services.AddSwaggerGen(c =>
             {
@@ -51,9 +51,9 @@ namespace IEvangelist.VideoChat
                .UseSpaStaticFiles();
 
             app.UseSignalR(routes =>
-            {
-                routes.MapHub<NotificationHub>("/notificationHub");
-            });
+                {
+                    routes.MapHub<NotificationHub>("/notificationHub");
+                });
             app.UseMvc(routes =>
                 {
                     routes.MapRoute(
