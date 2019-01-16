@@ -22,22 +22,28 @@ export class DeviceService {
 
     private async isGrantedMediaPermissions() {
         if (navigator && navigator['permissions']) {
-            const result = await navigator['permissions'].query({ name: 'camera' });
-            if (result) {
-                if (result.state === 'granted') {
-                    return true;
-                } else {
-                    const isGranted = await new Promise<boolean>(resolve => {
-                        result.onchange = (e: Event) => {
-                            const granted = e.target['state'] === 'granted';
-                            if (granted) {
-                                resolve(true);
+            try {
+                const result = await navigator['permissions'].query({ name: 'camera' });
+                if (result) {
+                    if (result.state === 'granted') {
+                        return true;
+                    } else {
+                        const isGranted = await new Promise<boolean>(resolve => {
+                            result.onchange = (_: Event) => {
+                                const granted = _.target['state'] === 'granted';
+                                if (granted) {
+                                    resolve(true);
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    return isGranted;
+                        return isGranted;
+                    }
                 }
+            } catch (e) {
+                // This is only currently supported in Chrome.
+                // https://stackoverflow.com/a/53155894/2410379
+                return true;
             }
         }
 
