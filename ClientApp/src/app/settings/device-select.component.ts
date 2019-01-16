@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { StorageService, StorageKey } from '../services/storage.service';
 
 class IdGenerator {
@@ -12,24 +12,28 @@ class IdGenerator {
     selector: 'app-device-select',
     templateUrl: './device-select.component.html'
 })
-export class DeviceSelectComponent implements OnInit {
+export class DeviceSelectComponent {
+    private localDevices: MediaDeviceInfo[] = [];
+
     id: string;
     selectedId: string;
+
+    get devices(): MediaDeviceInfo[] {
+        return this.localDevices;
+    }
 
     @Input() label: string;
     @Input() kind: MediaDeviceKind;
     @Input() key: StorageKey;
-    @Input() devices: MediaDeviceInfo[] = [];
+    @Input() set devices(devices: MediaDeviceInfo[]) {
+        this.selectedId = this.getOrAdd(this.key, this.localDevices = devices);
+    }
 
     @Output() settingsChanged = new EventEmitter<MediaDeviceInfo>();
 
     constructor(
         private readonly storageService: StorageService) {
         this.id = `device-select-${IdGenerator.getNext()}`;
-    }
-
-    ngOnInit() {
-        this.selectedId = this.getOrAdd(this.key, this.devices);
     }
 
     onSettingsChanged(deviceId: string) {
