@@ -52,9 +52,7 @@ export class CameraComponent implements AfterViewInit {
         try {
             this.isInitializing = true;
 
-            if (this.videoTrack) {
-                this.videoTrack.detach().forEach(element => element.remove());
-            }
+            this.finalizePreview();
 
             this.localTracks = kind && deviceId
                 ? await this.initializeTracks(kind, deviceId)

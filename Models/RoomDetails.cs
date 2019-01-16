@@ -6,7 +6,7 @@
 
         public string Name { get; set; }
 
-        public int Participants { get; set; }
+        public int ParticipantCount { get; set; }
 
         public int MaxParticipants { get; set; }
     }

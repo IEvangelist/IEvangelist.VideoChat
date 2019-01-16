@@ -55,7 +55,7 @@ namespace IEvangelist.VideoChat.Services
                 {
                     Name = room.UniqueName,
                     MaxParticipants = room.MaxParticipants ?? 0,
-                    Participants = participants.ToList().Count
+                    ParticipantCount = participants.ToList().Count
                 };
             }
         }

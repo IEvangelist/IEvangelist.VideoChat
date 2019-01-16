@@ -11,7 +11,7 @@ export interface NamedRoom {
     id: string;
     name: string;
     maxParticipants?: number;
-    participants: number;
+    participantCount: number;
 }
 
 export type Rooms = NamedRoom[];
