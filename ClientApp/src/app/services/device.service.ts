@@ -21,6 +21,10 @@ export class DeviceService {
     }
 
     private async isGrantedMediaPermissions() {
+        if (navigator && navigator.userAgent && navigator.userAgent.indexOf('Chrome') > 0) {
+            return true; // Follows standard workflow for non-Chrome browsers.
+        }
+
         if (navigator && navigator['permissions']) {
             try {
                 const result = await navigator['permissions'].query({ name: 'camera' });
