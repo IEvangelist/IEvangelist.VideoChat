@@ -23,7 +23,7 @@ namespace IEvangelist.VideoChat
 
             services.Configure<TwilioSettings>(_configuration.GetSection(nameof(TwilioSettings)))
                     .AddTransient<IVideoService, VideoService>()
-                    .AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist/ClientApp");
+                    .AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist");
 
             services.AddSignalR();
         }

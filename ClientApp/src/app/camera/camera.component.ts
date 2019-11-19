@@ -8,7 +8,7 @@ import { StorageService } from '../services/storage.service';
     templateUrl: './camera.component.html',
 })
 export class CameraComponent implements AfterViewInit {
-    @ViewChild('preview') previewElement: ElementRef;
+    @ViewChild('preview', { static: false }) previewElement: ElementRef;
 
     get tracks(): LocalTrack[] {
         return this.localTracks;

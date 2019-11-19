@@ -22,7 +22,7 @@ import {
     templateUrl: './participants.component.html',
 })
 export class ParticipantsComponent {
-    @ViewChild('list') listRef: ElementRef;
+    @ViewChild('list', { static: false }) listRef: ElementRef;
     @Output('participantsChanged') participantsChanged = new EventEmitter<boolean>();
     @Output('leaveRoom') leaveRoom = new EventEmitter<boolean>();
     @Input('activeRoomName') activeRoomName: string;

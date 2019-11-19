@@ -5,7 +5,7 @@ import { CameraComponent } from '../camera/camera.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { VideoChatService } from '../services/videochat.service';
-import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 @Component({
     selector: 'app-home',
@@ -13,10 +13,10 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
     templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-    @ViewChild('rooms') rooms: RoomsComponent;
-    @ViewChild('camera') camera: CameraComponent;
-    @ViewChild('settings') settings: SettingsComponent;
-    @ViewChild('participants') participants: ParticipantsComponent;
+    @ViewChild('rooms', { static: false }) rooms: RoomsComponent;
+    @ViewChild('camera', { static: false }) camera: CameraComponent;
+    @ViewChild('settings', { static: false }) settings: SettingsComponent;
+    @ViewChild('participants', { static: false }) participants: ParticipantsComponent;
 
     activeRoom: Room;
 
