@@ -19,6 +19,6 @@ There are several configurations that need to be made in order for this applicat
 
 | # | Name | Environment Variable Key  | 
 |--:|:--|:--|
-| 1 | `AccountSid` | `TwilioSettings__AccountSid` |
-| 2 | `ApiKey` | `TwilioSettings__ApiKey`  |
-| 3 | `ApiSecret` | `TwilioSettings__ApiSecret`  |
+| 1 | `AccountSid` | `TWILIO_ACCOUNT_SID` |
+| 2 | `ApiKey` | `TWILIO_API_KEY`  |
+| 3 | `ApiSecret` | `TWILIO_API_SECRET`  |

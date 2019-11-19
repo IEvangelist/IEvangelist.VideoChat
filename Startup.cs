@@ -8,20 +8,22 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace IEvangelist.VideoChat
 {
     public class Startup
     {
-        readonly IConfiguration _configuration;
-
-        public Startup(IConfiguration configuration) => _configuration = configuration;
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
-            services.Configure<TwilioSettings>(_configuration.GetSection(nameof(TwilioSettings)))
+            services.Configure<TwilioSettings>(settings =>
+                    {
+                        settings.AccountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID");
+                        settings.ApiSecret = Environment.GetEnvironmentVariable("TWILIO_API_SECRET");                        
+                        settings.ApiKey = Environment.GetEnvironmentVariable("TWILIO_API_KEY");
+                    })
                     .AddTransient<IVideoService, VideoService>()
                     .AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist");
 
@@ -49,13 +51,13 @@ namespace IEvangelist.VideoChat
                     endpoints.MapControllerRoute(
                         name: "default",
                         pattern: "{controller}/{action=Index}/{id?}");
+
                     endpoints.MapHub<NotificationHub>("/notificationHub");
                 })
                .UseSpa(spa =>
                 {
                     // To learn more about options for serving an Angular SPA from ASP.NET Core,
                     // see https://go.microsoft.com/fwlink/?linkid=864501
-
                     spa.Options.SourcePath = "ClientApp";
 
                     if (env.IsDevelopment())

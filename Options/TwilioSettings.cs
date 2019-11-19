@@ -6,11 +6,6 @@ namespace IEvangelist.VideoChat.Options
         /// The primary Twilio account SID, displayed prominently on your twilio.com/console dashboard.
         /// </summary>
         public string AccountSid { get; set; }
-        
-        /// <summary>
-        /// The auth token for your primary Twilio account, hidden on your twilio.com/console dashboard.
-        /// </summary>
-        public string AuthToken { get; set; }
 
         /// <summary>
         /// Signing Key SID, also known as the API SID or API Key.
