@@ -4,11 +4,10 @@ using IEvangelist.VideoChat.Options;
 using IEvangelist.VideoChat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
 
 namespace IEvangelist.VideoChat
 {
@@ -20,20 +19,16 @@ namespace IEvangelist.VideoChat
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews();
+
             services.Configure<TwilioSettings>(_configuration.GetSection(nameof(TwilioSettings)))
                     .AddTransient<IVideoService, VideoService>()
-                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist/ClientApp"; });
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "IEvangelist.VideoChat", Version = "v1" });
-            });
+                    .AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist/ClientApp");
 
             services.AddSignalR();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -44,21 +39,17 @@ namespace IEvangelist.VideoChat
                 app.UseHsts();
             }
 
-            app.UseSwagger()
-               .UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IEvangelist.VideoChat API v1"))
-               .UseHttpsRedirection()
+            app.UseHttpsRedirection()
                .UseStaticFiles()
                .UseSpaStaticFiles();
 
-            app.UseSignalR(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
                 {
-                    routes.MapHub<NotificationHub>("/notificationHub");
-                });
-            app.UseMvc(routes =>
-                {
-                    routes.MapRoute(
+                    endpoints.MapControllerRoute(
                         name: "default",
-                        template: "{controller}/{action=Index}/{id?}");
+                        pattern: "{controller}/{action=Index}/{id?}");
+                    endpoints.MapHub<NotificationHub>("/notificationHub");
                 })
                .UseSpa(spa =>
                 {

@@ -46,7 +46,7 @@ namespace IEvangelist.VideoChat.Services
 
             return await Task.WhenAll(tasks);
 
-            async Task<RoomDetails> GetRoomDetailsAsync(
+            static async Task<RoomDetails> GetRoomDetailsAsync(
                 RoomResource room,
                 Task<ResourceSet<ParticipantResource>> participantTask)
             {
@@ -87,15 +87,16 @@ namespace IEvangelist.VideoChat.Services
             "Zimmerman"
         };
 
-        string GetName() => $"{_adjectives.Random()} {_firstNames.Random()} {_lastNames.Random()}";
+        string GetName() => $"{_adjectives.RandomElement()} {_firstNames.RandomElement()} {_lastNames.RandomElement()}";
 
         #endregion
     }
 
     static class StringArrayExtensions
     {
-        static readonly Random _random = new Random((int)DateTime.Now.Ticks);
+        static readonly Random Random = new Random((int)DateTime.Now.Ticks);
 
-        internal static string Random(this IReadOnlyList<string> array) => array[_random.Next(array.Count)];
+        internal static string RandomElement(this IReadOnlyList<string> array) 
+            => array[Random.Next(array.Count)];
     }
 }
