@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 
 namespace IEvangelist.VideoChat
 {
@@ -21,10 +22,14 @@ namespace IEvangelist.VideoChat
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.Configure<TwilioSettings>(_configuration.GetSection(nameof(TwilioSettings)))
+            services.Configure<TwilioSettings>(settings =>
+                    {
+                        settings.AccountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID");
+                        settings.ApiSecret = Environment.GetEnvironmentVariable("TWILIO_API_SECRET");
+                        settings.ApiKey = Environment.GetEnvironmentVariable("TWILIO_API_KEY");
+                    })
                     .AddTransient<IVideoService, VideoService>()
-                    .AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist/ClientApp"; });
-
+                    .AddSpaStaticFiles(config => config.RootPath = "ClientApp/dist");
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "IEvangelist.VideoChat", Version = "v1" });
