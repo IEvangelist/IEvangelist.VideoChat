@@ -6,7 +6,6 @@
         <app-rooms #rooms (roomChanged)="onRoomChanged($event)" [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
     </div>
     <div class="grid-content">
-        <app-camera #camera [style.display]="!!activeRoom ? 'none' : 'block'"></app-camera>
         <app-participants #participants
                           (leaveRoom)="onLeaveRoom($event)"
                           (participantsChanged)="onParticipantsChanged($event)"
