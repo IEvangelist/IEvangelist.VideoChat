@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, Renderer2 } from '@angular/core';
-import { createLocalTracks, LocalTrack, LocalVideoTrack } from 'twilio-video';
+import { createLocalVideoTrack, LocalVideoTrack } from 'twilio-video';
 import { StorageService } from '../services/storage.service';
 
 @Component({
@@ -10,14 +10,8 @@ import { StorageService } from '../services/storage.service';
 export class CameraComponent implements AfterViewInit {
     @ViewChild('preview', { static: false }) previewElement: ElementRef;
 
-    get tracks(): LocalTrack[] {
-        return this.localTracks;
-    }
-
     isInitializing: boolean = true;
-
-    private videoTrack: LocalVideoTrack;
-    private localTracks: LocalTrack[] = [];
+    videoTrack: LocalVideoTrack = null;
 
     constructor(
         private readonly storageService: StorageService,
@@ -26,16 +20,12 @@ export class CameraComponent implements AfterViewInit {
     async ngAfterViewInit() {
         if (this.previewElement && this.previewElement.nativeElement) {
             const selectedVideoInput = this.storageService.get('videoInputId');
-            await this.initializeDevice('videoinput', selectedVideoInput);
+            await this.initializeDevice(selectedVideoInput);
         }
     }
 
-    initializePreview(deviceInfo?: MediaDeviceInfo) {
-        if (deviceInfo) {
-            this.initializeDevice(deviceInfo.kind, deviceInfo.deviceId);
-        } else {
-            this.initializeDevice();
-        }
+    async initializePreview(deviceId: string) {
+        await this.initializeDevice(deviceId);
     }
 
     finalizePreview() {
@@ -43,22 +33,22 @@ export class CameraComponent implements AfterViewInit {
             if (this.videoTrack) {
                 this.videoTrack.detach().forEach(element => element.remove());
             }
+            this.videoTrack = null;
         } catch (e) {
             console.error(e);
         }
     }
 
-    private async initializeDevice(kind?: MediaDeviceKind, deviceId?: string) {
+    private async initializeDevice(deviceId?: string) {
         try {
             this.isInitializing = true;
 
             this.finalizePreview();
 
-            this.localTracks = kind && deviceId
-                ? await this.initializeTracks(kind, deviceId)
-                : await this.initializeTracks();
+            this.videoTrack = deviceId
+                ? await createLocalVideoTrack({ deviceId })
+                : await createLocalVideoTrack();
 
-            this.videoTrack = this.localTracks.find(t => t.kind === 'video') as LocalVideoTrack;
             const videoElement = this.videoTrack.attach();
             this.renderer.setStyle(videoElement, 'height', '100%');
             this.renderer.setStyle(videoElement, 'width', '100%');
@@ -66,18 +56,5 @@ export class CameraComponent implements AfterViewInit {
         } finally {
             this.isInitializing = false;
         }
-    }
-
-    private initializeTracks(kind?: MediaDeviceKind, deviceId?: string) {
-        if (kind) {
-            switch (kind) {
-                case 'audioinput':
-                    return createLocalTracks({ audio: { deviceId }, video: true });
-                case 'videoinput':
-                    return createLocalTracks({ audio: true, video: { deviceId } });
-            }
-        }
-
-        return createLocalTracks({ audio: true, video: true });
     }
 }

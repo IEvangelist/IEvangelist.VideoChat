@@ -21,7 +21,7 @@ export class DeviceService {
     }
 
     private async isGrantedMediaPermissions() {
-        if (navigator && navigator.userAgent && navigator.userAgent.indexOf('Chrome') > 0) {
+        if (navigator && navigator.userAgent && navigator.userAgent.indexOf('Chrome') < 0) {
             return true; // Follows standard workflow for non-Chrome browsers.
         }
 

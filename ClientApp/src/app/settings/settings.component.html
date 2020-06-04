@@ -17,7 +17,7 @@
                                (settingsChanged)="onSettingsChanged($event)"></app-device-select>
         </div>
     </form>
-    <div>
+    <div [style.display]="isPreviewing ? 'block' : 'none'">
         <app-camera #camera></app-camera>
     </div>
 </div>

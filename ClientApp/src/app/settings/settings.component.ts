@@ -3,6 +3,7 @@ import {
     OnInit,
     OnDestroy,
     EventEmitter,
+    Input,
     Output,
     ViewChild
 } from '@angular/core';
@@ -35,6 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     @ViewChild('camera', { static: false }) camera: CameraComponent;
     @ViewChild('videoSelect', { static: false }) video: DeviceSelectComponent;
 
+    @Input('isPreviewing') isPreviewing: boolean;
     @Output() settingsChanged = new EventEmitter<MediaDeviceInfo>();
 
     constructor(
@@ -62,18 +64,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     async showPreviewCamera() {
-        if (this.video && this.videoDeviceId !== this.video.selectedId) {
+        this.isPreviewing = true;
+
+        if (!this.camera.videoTrack || this.videoDeviceId !== this.video.selectedId) {
             this.videoDeviceId = this.video.selectedId;
             const videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
-            await this.camera.initializePreview(videoDevice);
+            await this.camera.initializePreview(videoDevice.deviceId);
         }
 
-        return this.camera.tracks;
+        return this.camera.videoTrack;
     }
 
     hidePreviewCamera() {
+        this.isPreviewing = false;
         this.camera.finalizePreview();
-        return this.video && this.video.selectedId && this.devices.find(d => d.deviceId === this.video.selectedId);
+        return this.devices.find(d => d.deviceId === this.video.selectedId);
     }
 
     private handleDeviceAvailabilityChanges() {

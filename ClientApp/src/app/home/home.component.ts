@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { Room, RemoteParticipant } from 'twilio-video';
+import { createLocalAudioTrack, Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
 import { RoomsComponent } from '../rooms/rooms.component';
+import { CameraComponent } from '../camera/camera.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { VideoChatService } from '../services/videochat.service';
@@ -13,6 +14,7 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
 })
 export class HomeComponent implements OnInit {
     @ViewChild('rooms', { static: false }) rooms: RoomsComponent;
+    @ViewChild('camera', { static: false }) camera: CameraComponent;
     @ViewChild('settings', { static: false }) settings: SettingsComponent;
     @ViewChild('participants', { static: false }) participants: ParticipantsComponent;
 
@@ -39,8 +41,15 @@ export class HomeComponent implements OnInit {
     }
 
     async onSettingsChanged(deviceInfo?: MediaDeviceInfo) {
-        this.settings.hidePreviewCamera();
-        await this.settings.showPreviewCamera();
+        await this.camera.initializePreview(deviceInfo.deviceId);
+        if (this.settings.isPreviewing) {
+            const track = await this.settings.showPreviewCamera();
+            if (this.activeRoom) {
+                const localParticipant = this.activeRoom.localParticipant;
+                localParticipant.videoTracks.forEach(publication => publication.unpublish());
+                await localParticipant.publishTrack(track);
+            }
+        }
     }
 
     async onLeaveRoom(_: boolean) {
@@ -48,6 +57,9 @@ export class HomeComponent implements OnInit {
             this.activeRoom.disconnect();
             this.activeRoom = null;
         }
+
+        const videoDevice = this.settings.hidePreviewCamera();
+        await this.camera.initializePreview(videoDevice && videoDevice.deviceId);
 
         this.participants.clear();
     }
@@ -58,7 +70,12 @@ export class HomeComponent implements OnInit {
                 this.activeRoom.disconnect();
             }
 
-            const tracks = await this.settings.showPreviewCamera();
+            this.camera.finalizePreview();
+
+            const tracks = await Promise.all([
+                createLocalAudioTrack(),
+                this.settings.showPreviewCamera()
+            ]);
 
             this.activeRoom =
                 await this.videoChatService
@@ -77,11 +94,25 @@ export class HomeComponent implements OnInit {
 
     private registerRoomEvents() {
         this.activeRoom
+            .on('disconnected',
+                (room: Room) => room.localParticipant.tracks.forEach(publication => this.detachLocalTrack(publication.track)))
             .on('participantConnected',
                 (participant: RemoteParticipant) => this.participants.add(participant))
             .on('participantDisconnected',
                 (participant: RemoteParticipant) => this.participants.remove(participant))
             .on('dominantSpeakerChanged',
                 (dominantSpeaker: RemoteParticipant) => this.participants.loudest(dominantSpeaker));
+    }
+
+    private detachLocalTrack(track: LocalTrack) {
+        if (this.isDetachable(track)) {
+            track.detach().forEach(el => el.remove());
+        }
+    }
+
+    private isDetachable(track: LocalTrack): track is LocalAudioTrack | LocalVideoTrack {
+        return !!track
+            && ((track as LocalAudioTrack).detach !== undefined
+                || (track as LocalVideoTrack).detach !== undefined);
     }
 }
