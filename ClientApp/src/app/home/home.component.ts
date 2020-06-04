@@ -1,5 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
+import { createLocalAudioTrack, Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
 import { RoomsComponent } from '../rooms/rooms.component';
 import { CameraComponent } from '../camera/camera.component';
 import { SettingsComponent } from '../settings/settings.component';
@@ -40,8 +40,16 @@ export class HomeComponent implements OnInit {
         await this.notificationHub.start();
     }
 
-    async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
-        await this.camera.initializePreview(deviceInfo);
+    async onSettingsChanged(deviceInfo?: MediaDeviceInfo) {
+        await this.camera.initializePreview(deviceInfo.deviceId);
+        if (this.settings.isPreviewing) {
+            const track = await this.settings.showPreviewCamera();
+            if (this.activeRoom) {
+                const localParticipant = this.activeRoom.localParticipant;
+                localParticipant.videoTracks.forEach(publication => publication.unpublish());
+                await localParticipant.publishTrack(track);
+            }
+        }
     }
 
     async onLeaveRoom(_: boolean) {
@@ -50,9 +58,8 @@ export class HomeComponent implements OnInit {
             this.activeRoom = null;
         }
 
-        this.camera.finalizePreview();
         const videoDevice = this.settings.hidePreviewCamera();
-        this.camera.initializePreview(videoDevice);
+        await this.camera.initializePreview(videoDevice && videoDevice.deviceId);
 
         this.participants.clear();
     }
@@ -64,7 +71,11 @@ export class HomeComponent implements OnInit {
             }
 
             this.camera.finalizePreview();
-            const tracks = await this.settings.showPreviewCamera();
+
+            const tracks = await Promise.all([
+                createLocalAudioTrack(),
+                this.settings.showPreviewCamera()
+            ]);
 
             this.activeRoom =
                 await this.videoChatService
@@ -102,6 +113,6 @@ export class HomeComponent implements OnInit {
     private isDetachable(track: LocalTrack): track is LocalAudioTrack | LocalVideoTrack {
         return !!track
             && ((track as LocalAudioTrack).detach !== undefined
-            || (track as LocalVideoTrack).detach !== undefined);
+                || (track as LocalVideoTrack).detach !== undefined);
     }
 }

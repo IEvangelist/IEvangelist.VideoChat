@@ -60,23 +60,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
-        if (this.isPreviewing) {
-            await this.showPreviewCamera();
-        } else {
-            this.settingsChanged.emit(deviceInfo);
-        }
+        this.settingsChanged.emit(deviceInfo);
     }
 
     async showPreviewCamera() {
         this.isPreviewing = true;
 
-        if (this.videoDeviceId !== this.video.selectedId) {
+        if (!this.camera.videoTrack || this.videoDeviceId !== this.video.selectedId) {
             this.videoDeviceId = this.video.selectedId;
             const videoDevice = this.devices.find(d => d.deviceId === this.video.selectedId);
-            await this.camera.initializePreview(videoDevice);
+            await this.camera.initializePreview(videoDevice.deviceId);
         }
-        
-        return this.camera.tracks;
+
+        return this.camera.videoTrack;
     }
 
     hidePreviewCamera() {
