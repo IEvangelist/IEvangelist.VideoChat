@@ -13,10 +13,10 @@ import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signal
     templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit {
-    @ViewChild('rooms', { static: false }) rooms: RoomsComponent;
-    @ViewChild('camera', { static: false }) camera: CameraComponent;
-    @ViewChild('settings', { static: false }) settings: SettingsComponent;
-    @ViewChild('participants', { static: false }) participants: ParticipantsComponent;
+    @ViewChild('rooms') rooms: RoomsComponent;
+    @ViewChild('camera') camera: CameraComponent;
+    @ViewChild('settings') settings: SettingsComponent;
+    @ViewChild('participants') participants: ParticipantsComponent;
 
     activeRoom: Room;
 
