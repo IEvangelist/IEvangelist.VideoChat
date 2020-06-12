@@ -22,18 +22,19 @@
     "@microsoft/signalr": "3.0.1",
     "aspnet-prerendering": "^3.0.1",
     "core-js": "^2.6.1",
+    "tslib": "^1.10.0",
     "twilio-video": "2.0.0-beta15",
     "rxjs": "^6.5.3",
-    "zone.js": "^0.10.3"
+    "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.901.8",
+    "@angular-devkit/build-angular": "~0.901.8",
     "@angular/cli": "9.1.8",
     "@angular/compiler-cli": "9.1.11",
     "@angular/language-service": "9.1.11",
-    "@types/node": "~11.10.5",
+    "@types/node": "^12.11.1",
     "@types/twilio-video": "^2.0.9",
-    "codelyzer": "^5.0.1",
+    "codelyzer": "^5.1.2",
     "protractor": "^5.4.2",
     "ts-node": "~7.0.1",
     "tslint": "~5.12.0",
