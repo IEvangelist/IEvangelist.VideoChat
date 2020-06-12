@@ -1,45 +1,43 @@
 {
-    "name": "ievangelist-videochat",
-    "version": "1.0.0",
-    "license": "MIT",
-    "scripts": {
-        "ng": "ng",
-        "start": "ng serve",
-        "build": "ng build"
-    },
-    "private": true,
-    "dependencies": {
-        "@angular/animations": "8.2.14",
-        "@angular/common": "8.2.14",
-        "@angular/compiler": "8.2.14",
-        "@angular/core": "8.2.14",
-        "@angular/forms": "8.2.14",
-        "@angular/platform-browser": "8.2.14",
-        "@angular/platform-browser-dynamic": "8.2.14",
-        "@angular/platform-server": "8.2.14",
-        "@angular/router": "8.2.14",
-        "@nguniversal/module-map-ngfactory-loader": "7.0.2",
-        "@microsoft/signalr": "3.0.1",
-        "aspnet-prerendering": "^3.0.1",
-        "core-js": "^2.6.1",
-        "twilio-video": "2.0.0-beta15",
-        "rxjs": "^6.5.3",
-        "zone.js": "^0.9.1"
-    },
-    "devDependencies": {
-        "@angular-devkit/build-angular": "^0.800.6",
-        "@angular/cli": "8.3.19",
-        "@angular/compiler-cli": "8.2.14",
-        "@angular/language-service": "8.2.14",
-        "@types/node": "~11.10.5",
-        "@types/twilio-video": "^2.0.9",
-        "codelyzer": "^5.0.1",
-        "protractor": "^5.4.2",
-        "ts-node": "~7.0.1",
-        "tslint": "~5.12.0",
-        "typescript": "3.4.5"
-    },
-    "optionalDependencies": {
-        "node-sass": "^4.11.0"
-    }
+  "name": "ievangelist-videochat",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --verbose",
+    "build": "ng build"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "9.1.11",
+    "@angular/common": "9.1.11",
+    "@angular/compiler": "9.1.11",
+    "@angular/core": "9.1.11",
+    "@angular/forms": "9.1.11",
+    "@angular/platform-browser": "9.1.11",
+    "@angular/platform-browser-dynamic": "9.1.11",
+    "@angular/platform-server": "9.1.11",
+    "@angular/router": "9.1.11",
+    "@nguniversal/module-map-ngfactory-loader": "7.0.2",
+    "@microsoft/signalr": "3.0.1",
+    "aspnet-prerendering": "^3.0.1",
+    "core-js": "^2.6.1",
+    "tslib": "^1.10.0",
+    "twilio-video": "2.0.0-beta15",
+    "rxjs": "^6.5.3",
+    "zone.js": "~0.10.2"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.901.8",
+    "@angular/cli": "9.1.8",
+    "@angular/compiler-cli": "9.1.11",
+    "@angular/language-service": "9.1.11",
+    "@types/node": "^12.11.1",
+    "@types/twilio-video": "^2.0.9",
+    "codelyzer": "^5.1.2",
+    "protractor": "^7.0.0",
+    "ts-node": "~7.0.1",
+    "tslint": "~5.12.0",
+    "typescript": "3.8.3"
+  }
 }

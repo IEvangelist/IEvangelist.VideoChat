@@ -33,8 +33,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
         return this.devices && this.devices.filter(d => d.kind === 'videoinput').length > 0;
     }
 
-    @ViewChild('camera', { static: false }) camera: CameraComponent;
-    @ViewChild('videoSelect', { static: false }) video: DeviceSelectComponent;
+    @ViewChild('camera') camera: CameraComponent;
+    @ViewChild('videoSelect') video: DeviceSelectComponent;
 
     @Input('isPreviewing') isPreviewing: boolean;
     @Output() settingsChanged = new EventEmitter<MediaDeviceInfo>();
