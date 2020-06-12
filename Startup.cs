@@ -5,7 +5,6 @@ using IEvangelist.VideoChat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -21,7 +20,7 @@ namespace IEvangelist.VideoChat
             services.Configure<TwilioSettings>(settings =>
                     {
                         settings.AccountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID");
-                        settings.ApiSecret = Environment.GetEnvironmentVariable("TWILIO_API_SECRET");                        
+                        settings.ApiSecret = Environment.GetEnvironmentVariable("TWILIO_API_SECRET");
                         settings.ApiKey = Environment.GetEnvironmentVariable("TWILIO_API_KEY");
                     })
                     .AddTransient<IVideoService, VideoService>()
