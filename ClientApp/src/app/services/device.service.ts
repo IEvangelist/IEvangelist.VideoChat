@@ -61,7 +61,7 @@ export class DeviceService {
             if (devices.every(d => !d.label)) {
                 devices = await this.tryGetDevices();
             }
-            return devices;
+            return devices.filter(d => !!d.label);
         }
 
         return null;
