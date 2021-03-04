@@ -1,10 +1,9 @@
-﻿using System;
+﻿using IEvangelist.VideoChat.Models;
+using IEvangelist.VideoChat.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IEvangelist.VideoChat.Abstractions;
-using IEvangelist.VideoChat.Models;
-using IEvangelist.VideoChat.Options;
 using Twilio;
 using Twilio.Base;
 using Twilio.Jwt.AccessToken;
@@ -51,12 +50,12 @@ namespace IEvangelist.VideoChat.Services
                 Task<ResourceSet<ParticipantResource>> participantTask)
             {
                 var participants = await participantTask;
-                return new RoomDetails
-                {
-                    Name = room.UniqueName,
-                    MaxParticipants = room.MaxParticipants ?? 0,
-                    ParticipantCount = participants.ToList().Count
-                };
+
+                return new(
+                    room.Sid,
+                    room.UniqueName,
+                    participants.Count(),
+                    room.MaxParticipants ?? 0);
             }
         }
 
@@ -94,9 +93,9 @@ namespace IEvangelist.VideoChat.Services
 
     static class StringArrayExtensions
     {
-        static readonly Random Random = new Random((int)DateTime.Now.Ticks);
+        static readonly Random Random = new((int)DateTime.Now.Ticks);
 
-        internal static string RandomElement(this IReadOnlyList<string> array) 
+        internal static string RandomElement(this IReadOnlyList<string> array)
             => array[Random.Next(array.Count)];
     }
 }

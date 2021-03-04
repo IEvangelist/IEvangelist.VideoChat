@@ -13,22 +13,21 @@
           "builder": "@angular-devkit/build-angular:browser",
             "options": {
             "aot": true,
-                "progress": true,
-                "extractCss":  true,
-                "outputPath": "dist",
-                "index": "src/index.html",
-                "main": "src/main.ts",
-                "polyfills": "src/polyfills.ts",
-                "tsConfig": "src/tsconfig.app.json",
-                "assets": [
-                    "src/favicon.ico",
-                    "src/assets"
-                ],
-                "styles": [
-                    "src/styles.css"
-                ],
-                "scripts": []
-            },
+            "progress": true,
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          },
           "configurations": {
             "production": {
               "fileReplacements": [
@@ -40,9 +39,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,

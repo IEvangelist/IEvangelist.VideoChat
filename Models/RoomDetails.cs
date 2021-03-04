@@ -1,13 +1,8 @@
 ﻿namespace IEvangelist.VideoChat.Models
 {
-    public class RoomDetails
-    {
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int ParticipantCount { get; set; }
-
-        public int MaxParticipants { get; set; }
-    }
+    public record RoomDetails(
+        string Id,
+        string Name,
+        int ParticipantCount,
+        int MaxParticipants);
 }

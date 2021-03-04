@@ -1,10 +1,10 @@
-using IEvangelist.VideoChat.Abstractions;
 using IEvangelist.VideoChat.Hubs;
 using IEvangelist.VideoChat.Options;
 using IEvangelist.VideoChat.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -13,6 +13,10 @@ namespace IEvangelist.VideoChat
 {
     public class Startup
     {
+        readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration) => _configuration = configuration;
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
@@ -62,6 +66,7 @@ namespace IEvangelist.VideoChat
                     if (env.IsDevelopment())
                     {
                         spa.UseAngularCliServer(npmScript: "start");
+                        //spa.UseProxyToSpaDevelopmentServer(_configuration["SpaBaseUrl"] ?? "http://localhost:4200");
                     }
                 });
         }

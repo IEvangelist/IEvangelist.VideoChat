@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using IEvangelist.VideoChat.Models;
 
-namespace IEvangelist.VideoChat.Abstractions
+namespace IEvangelist.VideoChat.Services
 {
     public interface IVideoService
     {

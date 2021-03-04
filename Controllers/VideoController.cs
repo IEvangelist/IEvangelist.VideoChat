@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using IEvangelist.VideoChat.Abstractions;
+using IEvangelist.VideoChat.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IEvangelist.VideoChat.Controllers
