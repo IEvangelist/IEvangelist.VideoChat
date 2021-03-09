@@ -89,8 +89,8 @@ export class ParticipantsComponent {
 
     private subscribe(publication: RemoteTrackPublication | any) {
         if (publication && publication.on) {
-            publication.on('subscribed', track => this.attachRemoteTrack(track));
-            publication.on('unsubscribed', track => this.detachRemoteTrack(track));
+            publication.on('subscribed', (track: RemoteTrack) => this.attachRemoteTrack(track));
+            publication.on('unsubscribed', (track: RemoteTrack) => this.detachRemoteTrack(track));
         }
     }
 
