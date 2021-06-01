@@ -12,6 +12,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
             "options": {
+            "allowedCommonJsDependencies": [
+                "twilio-video"
+            ],
             "aot": true,
             "progress": true,
             "outputPath": "dist",
