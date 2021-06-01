@@ -20,7 +20,7 @@ namespace IEvangelist.VideoChat.Controllers
             => new JsonResult(new { token = _videoService.GetTwilioJwt(User.Identity.Name) });
 
         [HttpGet("rooms")]
-        public async Task<IActionResult> GetRooms() 
+        public async Task<IActionResult> GetRooms()
             => new JsonResult(await _videoService.GetAllRoomsAsync());
     }
 }
