@@ -12,7 +12,7 @@ namespace IEvangelist.VideoChat.Controllers
     {
         readonly IVideoService _videoService;
 
-        public VideoController(IVideoService videoService) 
+        public VideoController(IVideoService videoService)
             => _videoService = videoService;
 
         [HttpGet("token")]
