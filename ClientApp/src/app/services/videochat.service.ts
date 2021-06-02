@@ -1,5 +1,5 @@
 import { connect, ConnectOptions, LocalTrack, Room } from 'twilio-video';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ReplaySubject , Observable } from 'rxjs';
 
@@ -17,13 +17,19 @@ export interface NamedRoom {
 export type Rooms = NamedRoom[];
 
 @Injectable()
-export class VideoChatService {
+export class VideoChatService implements OnDestroy {
     $roomsUpdated: Observable<boolean>;
 
     private roomBroadcast = new ReplaySubject<boolean>();
 
     constructor(private readonly http: HttpClient) {
         this.$roomsUpdated = this.roomBroadcast.asObservable();
+    }
+
+    ngOnDestroy(): void {
+        if (this.roomBroadcast) {
+            this.roomBroadcast.unsubscribe();
+        }
     }
 
     private async getAuthToken() {
