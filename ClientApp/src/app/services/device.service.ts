@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
 
 export type Devices = MediaDeviceInfo[];
 
 @Injectable()
-export class DeviceService {
+export class DeviceService implements OnDestroy {
     $devicesUpdated: Observable<Promise<Devices>>;
 
     private deviceBroadcast = new ReplaySubject<Promise<Devices>>();
@@ -18,6 +18,12 @@ export class DeviceService {
 
         this.$devicesUpdated = this.deviceBroadcast.asObservable();
         this.deviceBroadcast.next(this.getDeviceOptions());
+    }
+
+    ngOnDestroy(): void {
+        if (this.deviceBroadcast) {
+            this.deviceBroadcast.unsubscribe();
+        }
     }
 
     private async isGrantedMediaPermissions() {
